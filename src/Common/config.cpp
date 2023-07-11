@@ -58,6 +58,8 @@ const string kBroadcastStreamNoneReader = "kBroadcastStreamNoneReader";
 const string kBroadcastHttpBeforeAccess = "kBroadcastHttpBeforeAccess";
 const string kBroadcastSendRtpStopped = "kBroadcastSendRtpStopped";
 const string KBroadcastRtpServerTimeout = "KBroadcastRtpServerTimeout";
+const string kIgnoreAudioTrack = GENERAL_FIELD "ignore_audio_trace";
+
 
 } // namespace Broadcast
 
@@ -90,6 +92,7 @@ static onceToken token([]() {
     mINI::Instance()[kWaitTrackReadyMS] = 10000;
     mINI::Instance()[kWaitAddTrackMS] = 3000;
     mINI::Instance()[kUnreadyFrameCache] = 100;
+    mINI::Instance()[kIgnoreAudioTrack] = false;
 });
 
 } // namespace General

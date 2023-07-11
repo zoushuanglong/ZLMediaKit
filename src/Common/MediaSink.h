@@ -183,6 +183,7 @@ private:
     std::unordered_map<int, std::function<void()> > _track_ready_callback;
     toolkit::Ticker _ticker;
     MuteAudioMaker::Ptr _mute_audio_maker;
+    bool isVideoReady();
 };
 
 

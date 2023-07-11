@@ -109,6 +109,18 @@ void MediaSink::checkTrackIfReady(){
             return;
         }
 
+        GET_CONFIG(uint32_t, kMaxAddTrackMS, General::kWaitAddTrackMS);
+        GET_CONFIG(bool, ignoreAudioTrack, General::kIgnoreAudioTrack);
+        if (isVideoReady() && (ignoreAudioTrack || _ticker.elapsedTime() > kMaxAddTrackMS)) {
+            InfoL << "force emit all track ready, time: " << _ticker.elapsedTime();
+            emitAllTrackReady();
+            return;
+        } else {
+            InfoL << "track not ready, videoReady: " << isVideoReady()
+                  << ", ignore: " << ignoreAudioTrack
+                  << ", timeout: " << (_ticker.elapsedTime() > kMaxAddTrackMS);
+        }
+
         if(!_track_ready_callback.empty()){
             //在超时时间内，如果存在未准备好的Track，那么继续等待
             return;
@@ -120,7 +132,6 @@ void MediaSink::checkTrackIfReady(){
             return;
         }
 
-        GET_CONFIG(uint32_t, kMaxAddTrackMS, General::kWaitAddTrackMS);
         if(_track_map.size() == 1 && _ticker.elapsedTime() > kMaxAddTrackMS){
             //如果只有一个Track，那么在该Track添加后，我们最多还等待若干时间(可能后面还会添加Track)
             emitAllTrackReady();
@@ -288,6 +299,15 @@ void MediaSink::setOnlyAudio(){
     _enable_audio = true;
     _add_mute_audio = false;
     _max_track_size = 1;
+}
+
+bool MediaSink::isVideoReady() {
+    for (auto &pr : _track_map) {
+        if (pr.second.first->getTrackType() == TrackVideo && pr.second.second && pr.second.first->ready()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void MediaSink::enableMuteAudio(bool flag) {

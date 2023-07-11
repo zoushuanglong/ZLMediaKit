@@ -181,6 +181,8 @@ extern const std::string kWaitTrackReadyMS;
 extern const std::string kWaitAddTrackMS;
 // 如果track未就绪，我们先缓存帧数据，但是有最大个数限制(100帧时大约4秒)，防止内存溢出
 extern const std::string kUnreadyFrameCache;
+// 是否忽略未准备好的音频数据
+extern const std::string kIgnoreAudioTrack;
 } // namespace General
 
 namespace Protocol {
