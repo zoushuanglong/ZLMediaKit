@@ -1,9 +1,9 @@
 ﻿/*
- * Copyright (c) 2016 The ZLMediaKit project authors. All Rights Reserved.
+ * Copyright (c) 2016-present The ZLMediaKit project authors. All Rights Reserved.
  *
- * This file is part of ZLMediaKit(https://github.com/xia-chu/ZLMediaKit).
+ * This file is part of ZLMediaKit(https://github.com/ZLMediaKit/ZLMediaKit).
  *
- * Use of this source code is governed by MIT license that can be found in the
+ * Use of this source code is governed by MIT-like license that can be found in the
  * LICENSE file in the root of the source tree. All contributing project authors
  * may be found in the AUTHORS file in the root of the source tree.
  */
@@ -65,9 +65,7 @@ typedef enum {
 
 }; // namespace Rtsp
 
-#if defined(_WIN32)
 #pragma pack(push, 1)
-#endif // defined(_WIN32)
 
 class RtpHeader {
 public:
@@ -132,11 +130,9 @@ private:
     size_t getPayloadOffset() const;
     // 返回padding长度
     size_t getPaddingSize(size_t rtp_size) const;
-} PACKED;
+};
 
-#if defined(_WIN32)
 #pragma pack(pop)
-#endif // defined(_WIN32)
 
 // 此rtp为rtp over tcp形式，需要忽略前4个字节
 class RtpPacket : public toolkit::BufferRaw {
@@ -169,6 +165,8 @@ public:
     uint32_t sample_rate;
     // ntp时间戳
     uint64_t ntp_stamp;
+
+    int track_index;
 
     static Ptr create();
 
@@ -236,7 +234,6 @@ public:
 
     SdpParser() = default;
     SdpParser(const std::string &sdp) { load(sdp); }
-    ~SdpParser() = default;
 
     void load(const std::string &sdp);
     bool available() const;
@@ -247,13 +244,12 @@ public:
 
 private:
     std::vector<SdpTrack::Ptr> _track_vec;
-    std::string _control_url;
 };
 
 /**
  * rtsp sdp基类
  */
-class Sdp : public CodecInfo {
+class Sdp {
 public:
     using Ptr = std::shared_ptr<Sdp>;
 
@@ -307,8 +303,6 @@ public:
     TitleSdp(float dur_sec = 0, const std::map<std::string, std::string> &header = std::map<std::string, std::string>(), int version = 0);
 
     std::string getSdp() const override { return _printer; }
-
-    CodecId getCodecId() const override { return CodecInvalid; }
 
     float getDuration() const { return _dur_sec; }
 
