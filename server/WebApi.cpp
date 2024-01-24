@@ -1692,9 +1692,12 @@ void installWebApi() {
         //启动FFmpeg进程，开始截图，生成临时文件，截图成功后替换为正式文件
         auto new_snap_tmp = new_snap + ".tmp";
         FFmpegSnap::makeSnap(allArgs["url"], new_snap_tmp, allArgs["timeout_sec"], [invoker, allArgs, new_snap, new_snap_tmp](bool success, const string &err_msg) {
-            if (!success) {
-                //生成截图失败，可能残留空文件
-                File::delete_file(new_snap_tmp);
+            if (!success) {  //2024-01-24 修改该段代码，解决抓图失败返回旧图片的缺陷
+                ////生成截图失败，可能残留空文件
+                //File::delete_file(new_snap_tmp.data());
+                WarnL << "截图失败,错误信息:" << err_msg << endl;
+                File::delete_file(new_snap.data());
+                rename(new_snap_tmp.data(), new_snap.data());
             } else {
                 //临时文件改成正式文件
                 File::delete_file(new_snap);
